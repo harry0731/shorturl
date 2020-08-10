@@ -51,7 +51,13 @@ class urlShortener:
         result = self._get_from_redis(url_key)
         if result == None:
             result = self._get_from_mongo(url_key)
-        return result
+            if result != None:
+                self._set_to_redis(url_key, result["url"])
+                return result["url"]
+            else:
+                return None
+        else:
+            return result
 
     def _get_from_redis(self, url_key):
         """
