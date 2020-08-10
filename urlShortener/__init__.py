@@ -114,7 +114,7 @@ class urlShortener:
                     # key is in db, check collision
                     if collision_check["url"] == url:
                         self.logger.debug("URL already existed")
-                        return {"State":"Sucess", 
+                        return {"State":"Success", 
                                 "short_url":"%s/%s" % (self.config["DEFAULT"]["SERVER_URL_PREFIX"], url_key)} 
                     else:
                         # collision occured generate new hah
@@ -132,7 +132,7 @@ class urlShortener:
                         # insert succe, put data in cache
                         cache = self._set_to_redis(url_key, url)
                         self.logger.debug(f"Cache Success: {cache}")
-                        return {"State":"Sucess", 
+                        return {"State":"Success", 
                                 "short_url":"%s/%s" % (self.config["DEFAULT"]["SERVER_URL_PREFIX"], url_key)}
             else:
                 # Used all md5 bits

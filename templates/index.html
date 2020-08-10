@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="colorlib.com">
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="s01">
+      <form>
+        <fieldset>
+          <legend>Shorten You URL</legend>
+        </fieldset>
+        <div class="inner-form">
+          <div class="input-field first-wrap">
+            <input id="search" type="text" placeholder="Paste the URL to shorten or preview" />
+          </div>
+          <div class="input-field third-wrap">
+            <button class="btn-search" type="button" onclick="shorten()">Shorten</button>
+          </div>
+          <div class="input-field third-wrap">
+            <button class="btn-search" type="button" onclick="preview()">Preview</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+
+<script>
+function shorten() {
+    var target = document.getElementById("search").value
+    console.log(target)
+    $.ajax({
+        url: "/shortURL",
+        type:"post",
+        data: JSON.stringify({'url': target}),
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json',
+        success:function(data){
+            console.log(data)
+            document.getElementById("search").value = data.short_url
+        },
+        error:function(e){
+            console.log(e)
+        }
+    })
+}
+
+function preview() {
+    var target = document.getElementById("search").value
+    console.log(target)
+    $.ajax({
+        url: target,
+        type:"post",
+        contentType: 'application/json; charset=UTF-8',
+        dataType: 'json',
+        success:function(data){
+            console.log(data)
+            document.getElementById("search").value = data.url
+        },
+        error:function(e){
+            console.log(e)
+        }
+    })
+}
+
+</script>

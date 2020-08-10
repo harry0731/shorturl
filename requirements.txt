@@ -3,3 +3,4 @@ pybase62
 redis
 pymongo
 pytest
+bootstrap-flask
