@@ -131,3 +131,25 @@ def test_redirect_shortURL_not_registored(client):
     rv = client.get(test_short_url)
     assert rv.status_code == 404
     assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
+
+def test_shorten_hash(client):
+    url_key_set = set()
+    test_urls = [
+        "https://www.gamer.com.tw/",
+        "https://news.ycombinator.com/",
+        "https://www.reddit.com/",
+        "https://buzzorange.com/techorange/",
+        "https://zhuanlan.zhihu.com/jiqizhixin",
+        "https://ai.googleblog.com/",
+        "https://ai.googleblog.com/2020/07/on-device-supermarket-product.html",
+        "https://bair.berkeley.edu/blog/2020/08/03/covid-fatality/",
+        "https://blog.mozilla.org/blog/2020/08/11/changing-world-changing-mozilla/",
+        "https://bevyengine.org/news/introducing-bevy/",
+        "https://github.com/ksensehq/eventnative",
+        "https://www.datadoghq.com/blog/dash-2020-new-feature-roundup/"
+    ]
+    for t_url in test_urls:
+        url_key = main.shortener._short(t_url, 0)
+        assert len(url_key) <= 5
+        assert url_key not in url_key_set
+        url_key_set.add(url_key)
