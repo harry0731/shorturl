@@ -153,3 +153,14 @@ def test_shorten_hash(client):
         assert len(url_key) <= 5
         assert url_key not in url_key_set
         url_key_set.add(url_key)
+
+def test_url_too_long(client):
+    test_url = main.config["DEFAULT"]["SERVER_URL_PREFIX"]
+    test_url += "a"*int(main.config["DEFAULT"]["MAX_URL_LEN"])
+    rv = client.post(
+            '/shortURL',
+            json={"url": test_url}
+        )
+    assert rv.status_code == 400
+    assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
+    assert (json.loads(rv.data.decode("utf-8"))["Error_msg"]) == "Please don't use url longer than " + str(main.config["DEFAULT"]["MAX_URL_LEN"]) + " character."
