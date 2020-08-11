@@ -1,0 +1,10 @@
+server { 
+  listen 80 default;
+  server_name 0.0.0.0;
+  location / { 
+    include uwsgi_params;
+    uwsgi_pass unix:/tmp/shorturl.sock;
+    uwsgi_param UWSGI_CHDIR /Workstation/shorturl;
+    uwsgi_param UWSGI_SCRIPT start_server:app;
+  }
+}
