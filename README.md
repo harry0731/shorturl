@@ -1,4 +1,6 @@
-# shorturl
+# shorturl  
+This is a project using python to creat a shorten url sevice  
+[Demo](http://188.166.219.73/)
 
 Install Docker
 ```
@@ -40,7 +42,7 @@ SERVER_URL_PREFIX=<current server ip or your domain>
 ```  
 apt-get install nginx
 cp default /etc/nginx/sites-available/default
-sudo service nginx restart
+service nginx restart
 
 uwsgi --ini uwsgi.ini
 ```
