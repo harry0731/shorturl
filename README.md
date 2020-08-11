@@ -53,3 +53,8 @@ ufw allow http
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --reload
 ```
+
+How to test  
+```  
+pytest
+```
