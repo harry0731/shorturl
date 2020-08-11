@@ -76,6 +76,23 @@ def test_shortURL_api(client):
     assert (json.loads(rv.data.decode("utf-8"))["short_url"]).endswith("xD0R")
     main.shortener.mdb.drop()
 
+def test_shortURL_api_dulplicate(client):
+    test_url = "https://www.google.com/"
+    rv = client.post(
+            '/shortURL',
+            json={"url": test_url}
+        )
+    rrv = client.post(
+            '/shortURL',
+            json={"url": test_url}
+        )
+    assert rv.status_code == 200
+    assert (json.loads(rv.data.decode("utf-8"))["short_url"]).endswith("xD0R")
+    assert rrv.status_code == 200
+    assert (json.loads(rrv.data.decode("utf-8"))["short_url"]).endswith("xD0R")
+    assert (json.loads(rv.data.decode("utf-8"))["short_url"]) == (json.loads(rrv.data.decode("utf-8"))["short_url"])
+    main.shortener.mdb.drop()
+
 def test_shortURL_api_with_illegal_url(client):
     rv = client.post(
             '/shortURL',
@@ -108,3 +125,9 @@ def test_no_redirect_shortURL(client):
     assert rrv.status_code == 200
     assert (json.loads(rrv.data.decode("utf-8"))["url"]) == test_url
     main.shortener.mdb.drop()
+
+def test_redirect_shortURL_not_registored(client):
+    test_short_url =  "/12345551"
+    rv = client.get(test_short_url)
+    assert rv.status_code == 404
+    assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
