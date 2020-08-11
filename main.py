@@ -30,7 +30,7 @@ def shorten_request():
 	logger.debug(f"API shortURL post data: {data}")
 	chk_url_res = shortener.valid_url(data["url"])
 	if chk_url_res["State"] != "Success":
-		return jsonify(chk_url_res)
+		return jsonify(chk_url_res), 400
 
 	result = shortener.generate_shorturl(data["url"])
 	logger.debug(f"shortener.generate_shorturl result: {result}")
