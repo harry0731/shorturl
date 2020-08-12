@@ -1,6 +1,8 @@
 # shorturl  
 
 這個專案使用Python來實現短網址服務  
+在Ubuntu 18.04以及20.04上經過測試  
+![alt Demo](assets/Demo.png?raw=true "Demo")  
 [Demo](http://188.166.219.73/)  
 
 ## 安裝流程
@@ -57,7 +59,7 @@ SERVER_URL_PREFIX=<目前Server的Domain或是ip>
 $ cp default /etc/nginx/sites-available/default
 $ service nginx restart
 ```  
-### 啟動uWSGI服務
+### 啟動uWSGI Server
 ```  
 $ uwsgi --ini uwsgi.ini
 ```  
@@ -66,9 +68,63 @@ $ uwsgi --ini uwsgi.ini
 $ ufw allow http
 ```
 
+## 使用說明  
+直接呼叫Server位址有網頁可以使用  
+Shorten按鈕功能為將長網址縮短  
+Preview按鈕功能為預覽短網址(將短網址還原)  
+
+也有API可以呼叫  
+### 縮短網址API 
+```  
+POST /shortURL HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "url": "https://www.google.com/",
+}
+```  
+回傳資訊  
+```
+{
+   "State": "Success",
+   "short_url": "http://188.166.219.73/xD0R"
+}
+```  
+
+### 預覽網址API 
+不用GET改用POST該短網址  
+```  
+POST /(url_key) HTTP/1.1
+```  
+回傳資訊  
+```
+{
+   "State": "Success",
+   "url": "https://www.google.com/"
+}
+```  
+
+### 短網址自動轉址 
+```  
+GET /(url_key) HTTP/1.1
+```  
+
+### 注意事項  
+* 太長的網址會被拒絕轉換  
+網址最大長度設定可在uwsgi.ini中更改(預設為2000)  
+* 違法的網址也會拒絕轉換  
+開頭非http https ftp...等等
+
+
 ## 如何測試  
 本專案使用pytest做為測試工具  
 在專案根目錄下執行以下指令
 ```  
 $ pytest
-```
+```  
+
+## Scaling  
+* 在MongoDB的存取部分有做Double Check避免不同台Worker同時存入相同的hash value
+* 使用MongoDB Sharding來因應更大的使用流量  
+* 使用Nginx做Load balance來分流多台機器上的uWSGI Server  
