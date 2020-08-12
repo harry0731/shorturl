@@ -3,6 +3,7 @@ import tempfile
 import pytest
 import json
 from urllib.parse import urlparse
+import logging
 
 # this import from parent folder
 import os,sys,inspect
@@ -22,7 +23,18 @@ class FakeCache:
     def set(self, url_key):
         return None
 
-@pytest.fixture
+class FakeDB:
+    def __init__(self):
+        self.dic = {}
+    def find_one(self, data):
+        if data["url_key"] in self.dic:
+            return self.dic[data["url_key"]]
+        else:
+            return None
+    def insert_one(self, data):
+        self.dic[data["url_key"]] = data["url"]
+
+@pytest.fixture(scope="module")
 def client_with_cache():
     main.app.config['TESTING'] = True
     # using testing db
@@ -31,7 +43,7 @@ def client_with_cache():
     with main.app.test_client() as client:
         yield client
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def client():
     main.app.config['TESTING'] = True
     # use fake redis cache to check db work fine
@@ -39,6 +51,16 @@ def client():
     # using testing db
     main.config["mongodb"]["collection"] = "test_shorturl"
     main.urlShortener = urlShortener(main.config, main.logger)
+    with main.app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope="module")
+def client_without_db():
+    main.app.config['TESTING'] = True
+    # use fake redis cache to check db work fine
+    main.shortener.redis = FakeCache()
+    main.urlShortener.mdb = FakeDB()
+    main.logger.setLevel(logging.ERROR)
     with main.app.test_client() as client:
         yield client
 
@@ -164,3 +186,40 @@ def test_url_too_long(client):
     assert rv.status_code == 400
     assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
     assert (json.loads(rv.data.decode("utf-8"))["Error_msg"]) == "Please don't use url longer than " + str(main.config["DEFAULT"]["MAX_URL_LEN"]) + " character."
+
+def test_api_collision(client):
+    rv = client.post(
+            '/shortURL',
+            json={"url": "http://0.0.8.241"}
+        )
+    rrv = client.post(
+            '/shortURL',
+            json={"url": "http://0.0.15.74"}
+        )
+    assert rv.status_code == 200
+    assert rrv.status_code == 200
+    main.shortener.mdb.drop()
+
+def test_shortURL_api_small_amount(client_without_db):
+    for i in range(256):
+        for j in range(256):
+            t_url = f"http://192.168.{i}.{j}"
+            # url_key = main.shortener._short(t_url, 0)
+            rv = client_without_db.post(
+                    '/shortURL',
+                    json={"url": t_url}
+                )
+            assert rv.status_code == 200
+
+def test_shortURL_api_massive(client_without_db):
+    for i in range(256):
+        for j in range(256):
+            for k in range(256):
+                for l in range(256):
+                    t_url = f"http://{i}.{j}.{k}.{l}"
+                    # url_key = main.shortener._short(t_url, 0)
+                    rv = client_without_db.post(
+                            '/shortURL',
+                            json={"url": t_url}
+                        )
+                    assert rv.status_code == 200

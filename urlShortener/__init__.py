@@ -90,7 +90,6 @@ class urlShortener:
         try:
             self.mdb.insert_one(data)
             r = self._get_from_mongo(url_key)
-            print(r)
             if r != None and r["url"] == url:
                 self.logger.debug("insert data to mongodb success")
                 return {"State":"Success"}
@@ -108,9 +107,9 @@ class urlShortener:
         The work flow of general usage.
         """
         # In general mode, generate the relative key first.
-        url_key = None
+        url_key = "init"
         count = 0
-        while url_key == None:
+        while url_key != None:
             # generate short url
             url_key = self._short(url, count)
             if url_key != None:
@@ -123,7 +122,8 @@ class urlShortener:
                         return {"State":"Success", 
                                 "short_url":"%s/%s" % (self.config["DEFAULT"]["SERVER_URL_PREFIX"], url_key)} 
                     else:
-                        # collision occured generate new hah
+                        # collision occured generate new hash
+                        self.logger.debug("collision!!")
                         count += 1
                         continue
                 else:

@@ -5,8 +5,8 @@
 ![alt Demo](assets/Demo.png?raw=true "Demo")  
 [Demo](http://188.166.219.73/)  
 
-# **安裝流程**
-### Docker
+# **安裝流程**  
+### 1. Docker
 本專案會需要使用到Docker來快速建立MongoDB資料庫以及Redis做為系統Cache  
 Docker在Ubuntu, Mint, 或是 Debian系統下的安裝流程  
 ```
@@ -20,29 +20,49 @@ $ apt-get update
 $ apt-get install docker-ce docker-ce-cli containerd.io
 ```  
 
-### Python 3
+### 2. Python 3
 ```  
 $ apt-get install python3 python3-pip
 ```  
-### Nginx  
+### 3. Nginx  
 ```  
 $ apt-get install nginx
 ```  
-### 專案下載以及安裝所需相關套件
+### 4. 專案下載以及安裝所需相關套件
 ```  
 $ git clone https://github.com/harry0731/shorturl.git
 $ cd shorturl
 $ pip3 install -r requirements.txt
-```
-### 建立Redis 做為系統Cache
+```  
+# **專案部屬流程**  
+### 0. 注意事項  
+專案內有三個設定檔  
+分別為  
+* config.ini  
+專案內部設定
+* default  
+Nginx設定檔
+* uwsgi.ini  
+uWSGI設定檔  
+
+底下的安裝流程皆使用預設選項  
+你可以根據自己需要做修正  
+比如說假如我想變更Redis服務所使用的port  
+你就可以在步驟1的地方改變redis container對外所使用的port  
+並且在config.ini內更改對應的參數redis->port  
+或是變更Nginx或是uWSGI的設定檔使其更加符合當下的Server運作環境  
+也或是可以連線至其他台Server上的Redis或是MongoDB等等的設定  
+*PS: uwsgi.ini內的lazy-apps必須是true 否則與MongoDB的連線會有錯誤*
+
+### 1. 建立Redis 做為系統Cache
 ```
 $ docker run -itd --name redis-shorturl -p 6379:6379 redis
 ```  
-### 建立MongoDB 做為系統Database
+### 2. 建立MongoDB 做為系統Database
 ```
-$ docker run -itd --name mongo -p 27017:27017 mongo
+$ docker run -itd --name mongo-shorturl -p 27017:27017 mongo
 ```
-### 修改 uwsgi.ini, default, config.ini 三個檔案  
+### 3. 修改 uwsgi.ini, default, config.ini 三個檔案  
 ```
 # uwsgi.ini
 chdir=<目前專案路徑>
@@ -54,12 +74,12 @@ uwsgi_param UWSGI_CHDIR <目前專案路徑>
 # config.ini 
 SERVER_URL_PREFIX=<目前Server的Domain或是ip>
 ```  
-### 設定Nginx
+### 4. 設定Nginx
 ```  
 $ cp default /etc/nginx/sites-available/default
 $ service nginx restart
 ```  
-### 啟動uWSGI Server
+### 5. 啟動uWSGI Server
 ```  
 $ uwsgi --ini uwsgi.ini
 ```  
