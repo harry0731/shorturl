@@ -71,7 +71,9 @@ $ ufw allow http
 # **使用說明**  
 直接呼叫Server位址有網頁可以使用  
 Shorten按鈕功能為將長網址縮短  
+![alt shortenurl](assets/shortenurl.gif?raw=true "shortenurl")  
 Preview按鈕功能為預覽短網址(將短網址還原)  
+![alt previewurl](assets/previewurl.gif?raw=true "previewurl") 
 
 也有API可以呼叫  
 ### **縮短網址API** 
@@ -93,7 +95,7 @@ Content-Type: application/json
 ```  
 
 ### **預覽網址API** 
-不用GET改用POST該短網址  
+使用POST對該短網址進行請求即可取得原始網址
 ```  
 POST /(url_key) HTTP/1.1
 ```  
