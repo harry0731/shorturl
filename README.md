@@ -143,18 +143,19 @@ GET /(url_key) HTTP/1.1
 本專案使用pytest做為測試工具  
 在專案根目錄下執行以下指令  
 需要注意的是  
-test_shortURL_api_small_amount以及test_shortURL_api_massive兩個測試所需要的時間相當長  
-* 完整測試(不建議 時間太長)
+test_shortURL_api_small_amount以及test_shortURL_api_massive兩個測試所需要的時間相當長  test_shortURL_api_small_amount測試256*256組url  
+test_shortURL_api_massive測試256*256*256*256組url
+* 完整測試，不建議，時間太長
 ```  
 $ pytest
 ```  
-* 部分測試(不跑test_shortURL_api_massive，相對較快)  
+* 部分測試，不跑test_shortURL_api_massive，相對較快(37min)  
 ```
-$ pytest -k "shorturl_test and not small_amount" 
+$ pytest -k "shorturl_test and not massive" 
 ```  
-* 部分測試(不跑test_shortURL_api_massive以及test_shortURL_api_small_amount，最快)  
+* 部分測試，不跑test_shortURL_api_massive以及test_shortURL_api_small_amount，最快(0.56sec)  
 ```
-$ pytest -k "shorturl_test and not small_amount and not massive" 
+$ pytest -k "shorturl_test and not massive and not small_amount" 
 ```
 
 # **Scaling**  
