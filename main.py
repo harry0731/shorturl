@@ -70,5 +70,4 @@ def page():
 
 if __name__ == '__main__':
 	# Test with Flask development server
-	shortener.get_url("123")
-	# app.run(host='0.0.0.0', port=8080)	
+	app.run(host='0.0.0.0', port=8080)	

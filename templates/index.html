@@ -48,6 +48,7 @@ function shorten() {
         },
         error:function(e){
             console.log(e)
+            document.getElementById("search").value = e.responseJSON.Error_msg
         }
     })
 }
@@ -66,6 +67,7 @@ function preview() {
         },
         error:function(e){
             console.log(e)
+            document.getElementById("search").value = e.responseJSON.Error_msg
         }
     })
 }
