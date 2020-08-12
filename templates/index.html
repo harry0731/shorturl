@@ -44,7 +44,11 @@ function shorten() {
         dataType: 'json',
         success:function(data){
             console.log(data)
-            document.getElementById("search").value = data.short_url
+            if (data.State == "Success") {
+              document.getElementById("search").value = data.short_url
+            } else {
+              document.getElementById("search").value = data.Error_msg
+            }
         },
         error:function(e){
             console.log(e)
@@ -63,7 +67,11 @@ function preview() {
         dataType: 'json',
         success:function(data){
             console.log(data)
-            document.getElementById("search").value = data.url
+            if (data.State == "Success") {
+              document.getElementById("search").value = data.url
+            } else {
+              document.getElementById("search").value = data.Error_msg
+            }
         },
         error:function(e){
             console.log(e)
