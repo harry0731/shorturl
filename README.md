@@ -141,10 +141,21 @@ GET /(url_key) HTTP/1.1
 
 # **如何測試**  
 本專案使用pytest做為測試工具  
-在專案根目錄下執行以下指令
+在專案根目錄下執行以下指令  
+需要注意的是  
+test_shortURL_api_small_amount以及test_shortURL_api_massive兩個測試所需要的時間相當長  
+* 完整測試(不建議 時間太長)
 ```  
 $ pytest
 ```  
+* 部分測試(不跑test_shortURL_api_massive，相對較快)  
+```
+$ pytest -k "shorturl_test and not small_amount" 
+```  
+* 部分測試(不跑test_shortURL_api_massive以及test_shortURL_api_small_amount，最快)  
+```
+$ pytest -k "shorturl_test and not small_amount and not massive" 
+```
 
 # **Scaling**  
 * 在MongoDB的存取部分有做Double Check避免不同台Worker同時存入相同的hash value
