@@ -143,8 +143,8 @@ GET /(url_key) HTTP/1.1
 本專案使用pytest做為測試工具  
 在專案根目錄下執行以下指令  
 需要注意的是  
-test_shortURL_api_small_amount以及test_shortURL_api_massive兩個測試所需要的時間相當長  test_shortURL_api_small_amount測試256*256組url  
-test_shortURL_api_massive測試256*256*256*256組url
+test_shortURL_api_small_amount以及test_shortURL_api_massive兩個測試所需要的時間相當長  test_shortURL_api_small_amount測試256^2組url  
+test_shortURL_api_massive測試256^4組url
 * 完整測試，不建議，時間太長
 ```  
 $ pytest
