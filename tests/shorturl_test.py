@@ -175,6 +175,12 @@ def test_redirect_shortURL_not_registored(client):
     assert rv.status_code == 404
     assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
 
+def test_no_redirect_shortURL_not_registored(client):
+    test_short_url =  "/12345551"
+    rv = client.post(test_short_url)
+    assert rv.status_code == 400
+    assert (json.loads(rv.data.decode("utf-8"))["State"]) == "Failed"
+
 def test_shorten_hash(client):
     url_key_set = set()
     test_urls = [
