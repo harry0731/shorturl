@@ -115,6 +115,27 @@ def test_shortURL_api_dulplicate(client):
     assert (json.loads(rv.data.decode("utf-8"))["short_url"]) == (json.loads(rrv.data.decode("utf-8"))["short_url"])
     main.shortener.mdb.drop()
 
+def test_shortURL_api_short_twice(client):
+    test_url = "https://www.google.com/"
+    rv = client.post(
+            '/shortURL',
+            json={"url": test_url}
+        )
+    rrv = client.post(
+            '/shortURL',
+            json={"url": json.loads(rv.data.decode("utf-8"))["short_url"]}
+        )
+    rrrv = client.get(
+        json.loads(rrv.data.decode("utf-8"))["short_url"])
+    rrrrv = client.get(rrrv.location)
+    
+    assert rv.status_code == 200
+    assert rrv.status_code == 200
+    assert rrrv.status_code == 302
+    assert rrrrv.status_code == 302
+    assert rrrrv.location == test_url
+    main.shortener.mdb.drop()
+
 def test_shortURL_api_with_illegal_url(client):
     rv = client.post(
             '/shortURL',
